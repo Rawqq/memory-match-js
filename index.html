@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Memory Match Game</title>
+  <style>
+    .grid { display: grid; grid-template-columns: repeat(4, 100px); gap: 10px; margin: 20px auto; width: max-content; }
+    .card { width: 100px; height: 100px; background: #2e3a87; color: white; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; }
+    .matched { background: #4caf50; cursor: default; }
+  </style>
+</head>
+<body>
+  <div class="grid" id="grid"></div>
+  <script>
+    const cards = ['A','A','B','B','C','C','D','D'];
+    let firstCard = null;
+    let lockBoard = false;
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+    shuffle(cards);
+    const grid = document.getElementById('grid');
+    cards.forEach(symbol => {
+      const cardEl = document.createElement('div');
+      cardEl.className = 'card';
+      cardEl.dataset.symbol = symbol;
+      cardEl.textContent = '';
+      cardEl.addEventListener('click', () => {
+        if (lockBoard || cardEl.classList.contains('matched') || cardEl.textContent) return;
+        cardEl.textContent = symbol;
+        if (!firstCard) {
+          firstCard = cardEl;
+        } else {
+          if (firstCard.dataset.symbol === symbol) {
+            firstCard.classList.add('matched');
+            cardEl.classList.add('matched');
+            firstCard = null;
+          } else {
+            lockBoard = true;
+            setTimeout(() => {
+              firstCard.textContent = '';
+              cardEl.textContent = '';
+              firstCard = null;
+              lockBoard = false;
+            }, 800);
+          }
+        }
+      });
+      grid.appendChild(cardEl);
+    });
+  </script>
+</body>
+</html>
